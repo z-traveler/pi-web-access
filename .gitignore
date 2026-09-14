@@ -3,3 +3,6 @@ bun.lock
 .pi/
 .pi-subagents/
 dist/
+
+# Local-only files
+*.local.*
