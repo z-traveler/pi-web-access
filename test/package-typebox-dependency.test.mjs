@@ -8,7 +8,7 @@ import { test } from "node:test";
 
 const repoRoot = resolve(new URL("..", import.meta.url).pathname);
 
-test("packed installs include typebox without peer dependencies", async () => {
+test("packed installs declare typebox as a host-provided peer", async () => {
 	const tempDir = await mkdtemp(join(tmpdir(), "pi-web-access-pack-install-"));
 	try {
 		const packOutput = execFileSync("npm", ["pack", "--json", "--pack-destination", tempDir], {
@@ -32,9 +32,8 @@ test("packed installs include typebox without peer dependencies", async () => {
 
 		const packageRequire = createRequire(join(tempDir, "node_modules", "pi-web-access", "package.json"));
 		const installedManifest = packageRequire("pi-web-access/package.json");
-		assert.equal(installedManifest.peerDependencies?.typebox, undefined);
-		assert.match(installedManifest.dependencies?.typebox, /^\^1\./);
-		assert.match(packageRequire.resolve("typebox").replaceAll("\\", "/"), /node_modules\/typebox\//);
+		assert.equal(installedManifest.peerDependencies?.typebox, "*");
+		assert.equal(installedManifest.dependencies?.typebox, undefined);
 	} finally {
 		await rm(tempDir, { recursive: true, force: true });
 	}
